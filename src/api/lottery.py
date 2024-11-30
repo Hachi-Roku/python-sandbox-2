@@ -1,7 +1,9 @@
 from fastapi import APIRouter, HTTPException
 from typing import List, Optional
 from datetime import date
-from ..models.lottery import LotteryTicket
+from uuid import uuid4
+from ..models.lottery_ticket import LotteryTicket
+from ..models.lottery_ticket_create import LotteryTicketCreate
 
 # Router for lottery-related endpoints
 lottery_router = APIRouter()
@@ -45,30 +47,37 @@ def get_statistics():
         "total_prize_amount": total_prize
     }
 
-
 @lottery_router.post("/tickets", response_model=LotteryTicket)
-def add_ticket(ticket: LotteryTicket):
+def add_ticket(ticket: LotteryTicketCreate):
     """
-    Add a new ticket to the database.
+    Add a new ticket to the database with auto-generated ID and purchase date.
     """
-    if any(existing_ticket.ticket_id == ticket.ticket_id for existing_ticket in tickets_db):
-        raise HTTPException(status_code=400, detail="Ticket with this ID already exists.")
-    tickets_db.append(ticket)
-    return ticket
+    new_ticket = LotteryTicket(
+        ticket_id=str(uuid4()),
+        purchase_date=date.today(),
+        **ticket.model_dump()
+    )
+    tickets_db.append(new_ticket)
+    return new_ticket
 
 @lottery_router.put("/tickets/{ticket_id}", response_model=LotteryTicket)
-def update_ticket(ticket_id: int, updated_ticket: LotteryTicket):
+def update_ticket(ticket_id: str, updated_ticket: LotteryTicketCreate):
     """
     Update ticket information by ID.
     """
     for i, ticket in enumerate(tickets_db):
         if ticket.ticket_id == ticket_id:
-            tickets_db[i] = updated_ticket
-            return updated_ticket
+            # Create a new LotteryTicket object while preserving ticket_id and purchase_date
+            tickets_db[i] = LotteryTicket(
+                ticket_id=ticket.ticket_id,
+                purchase_date=ticket.purchase_date,
+                **updated_ticket.model_dump()
+            )
+            return tickets_db[i]
     raise HTTPException(status_code=404, detail="Ticket with this ID not found.")
 
 @lottery_router.delete("/tickets/{ticket_id}")
-def delete_ticket(ticket_id: int):
+def delete_ticket(ticket_id: str):
     """
     Delete a ticket by ID.
     """

@@ -7,16 +7,15 @@ import httpx
 # Loading data from .env
 load_dotenv()
 
-# Retreiving secret key from env
-
 verify_router = APIRouter()
 
+# Retreiving secret key from env
 RECAPTCHA_SECRET_KEY = os.getenv("RECAPTCHA_SECRET_KEY")
 
 @verify_router.post("/verify-captcha")
 async def verify_captcha(captcha_response: str = Form(...)):
     """
-    Проверяет Google reCAPTCHA ответ пользователя.
+    Verifies Google reCAPTCHA user response.
     """
     async with httpx.AsyncClient() as client:
         response = await client.post(
@@ -29,6 +28,6 @@ async def verify_captcha(captcha_response: str = Form(...)):
         result = response.json()
 
     if not result.get("success"):
-        raise HTTPException(status_code=400, detail="Ошибка верификации reCAPTCHA")
+        raise HTTPException(status_code=400, detail="reCAPTCHA verification error")
 
-    return {"message": "reCAPTCHA верифицирована успешно"}
+    return {"message": "reCAPTCHA verified successfully"}
