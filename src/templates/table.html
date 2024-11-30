@@ -190,6 +190,22 @@
         });
       }
 
+      async function deleteTicket(ticketId) {
+        const response = await fetch(`/api/tickets/${ticketId}`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          alert('Ticket deleted successfully!');
+          loadTickets();
+        } else {
+          const errorData = await response.json();
+          alert(
+            `Failed to delete ticket: ${errorData.detail || 'Unknown error'}`
+          );
+        }
+      }
+
       window.onload = function () {
         disableButtons();
       };
