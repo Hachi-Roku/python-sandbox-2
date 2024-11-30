@@ -91,8 +91,15 @@
         }
       }
 
-      async function loadTickets() {
-        const response = await fetch('/api/tickets');
+      async function loadTickets(sortBy = null, order = 'asc') {
+        let url = '/api/tickets';
+
+        // Добавляем параметры сортировки
+        if (sortBy) {
+          url += `?sort_by=${sortBy}&order=${order}`;
+        }
+
+        const response = await fetch(url);
         const tickets = await response.json();
 
         const table = document.getElementById('tickets-table');
@@ -101,27 +108,27 @@
           const row = document.createElement('tr');
           row.dataset.id = ticket.ticket_id;
           row.innerHTML = `
-                    <td><input class="ticket-number" value="${
-                      ticket.ticket_number
-                    }"></td>
-                    <td><input class="ticket-price" type="number" step="0.01" value="${
-                      ticket.ticket_price
-                    }"></td>
-                    <td><input class="ticket-is-winner" type="checkbox" ${
-                      ticket.is_winner ? 'checked' : ''
-                    }></td>
-                    <td><input class="ticket-prize-amount" type="number" step="0.01" value="${
-                      ticket.prize_amount
-                    }"></td>
-                    <td>
-                        <button onclick="updateTicket('${
-                          ticket.ticket_id
-                        }')">Update</button>
-                        <button onclick="deleteTicket('${
-                          ticket.ticket_id
-                        }')">Delete</button>
-                    </td>
-                `;
+            <td><input class="ticket-number" value="${
+              ticket.ticket_number
+            }"></td>
+            <td><input class="ticket-price" type="number" step="0.01" value="${
+              ticket.ticket_price
+            }"></td>
+            <td><input class="ticket-is-winner" type="checkbox" ${
+              ticket.is_winner ? 'checked' : ''
+            }></td>
+            <td><input class="ticket-prize-amount" type="number" step="0.01" value="${
+              ticket.prize_amount
+            }"></td>
+            <td>
+                <button onclick="updateTicket('${
+                  ticket.ticket_id
+                }')">Update</button>
+                <button onclick="deleteTicket('${
+                  ticket.ticket_id
+                }')">Delete</button>
+            </td>
+        `;
           table.appendChild(row);
         });
       }
