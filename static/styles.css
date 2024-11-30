@@ -47,9 +47,76 @@ body {
   align-items: center;
   gap: 8px;
 }
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
 
-.upload-form {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+h1, h2 {
+  text-align: center;
+}
+
+.dashboard {
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: #f9f9f9;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+thead {
+  background-color: #f4f4f4;
+}
+
+button {
+  padding: 5px 10px;
+  margin: 0 2px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button:nth-child(2) {
+  background-color: #dc3545;
+}
+
+button:nth-child(2):hover {
+  background-color: #c82333;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+input, select {
+  margin-right: 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.g-recaptcha {
+  margin-bottom: 20px;
 }

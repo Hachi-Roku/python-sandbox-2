@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lottery Tickets</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script>
+      let captchaVerified = false;
+
+      async function verifyCaptcha(token) {
+        const response = await fetch('/verify-captcha', {
+          method: 'POST',
+          body: new URLSearchParams({captcha_response: token}),
+        });
+
+        const statusMessage = document.getElementById('status-message');
+
+        if (response.ok) {
+          captchaVerified = true;
+          statusMessage.innerText =
+            'Captcha verified successfully! You can now use all features.';
+          statusMessage.style.color = 'green';
+          enableButtons();
+        } else {
+          statusMessage.innerText =
+            'Captcha verification failed! Please try again.';
+          statusMessage.style.color = 'red';
+        }
+      }
+
+      function enableButtons() {
+        document.querySelectorAll('button').forEach((button) => {
+          button.disabled = false;
+        });
+      }
+
+      function disableButtons() {
+        document.querySelectorAll('button').forEach((button) => {
+          button.disabled = true;
+        });
+      }
+
+      function enableButtons() {
+        document.querySelectorAll('button').forEach((button) => {
+          button.disabled = false;
+        });
+      }
+
+      function disableButtons() {
+        document.querySelectorAll('button').forEach((button) => {
+          button.disabled = true;
+        });
+      }
+
+      window.onload = function () {
+        disableButtons();
+      };
+    </script>
+  </head>
+  <body>
+    <h1>Lottery Tickets</h1>
+
+    <div>I'm a human</div>
+
+    <!-- Google reCAPTCHA -->
+    <div
+      class="g-recaptcha"
+      data-sitekey="{{recaptcha_public_key}}"
+      data-callback="verifyCaptcha"
+    ></div>
+
+    <!-- Dashboard -->
+    <div class="dashboard">
+      <h2>Dashboard</h2>
+      <p>Average Ticket Price: $<span id="average-price">0.00</span></p>
+      <p>Total Winners: <span id="total-winners">0</span></p>
+      <p>Total Prize Amount: $<span id="total-prize">0.00</span></p>
+    </div>
+
+    <!-- Add Ticket Form -->
+    <form onsubmit="addTicket(); return false;">
+      <label
+        >Ticket Number: <input id="ticket_number" type="text" required
+      /></label>
+      <label
+        >Ticket Price:
+        <input id="ticket_price" type="number" step="0.01" required
+      /></label>
+      <label>Is Winner: <input id="is_winner" type="checkbox" /></label>
+      <label
+        >Prize Amount: <input id="prize_amount" type="number" step="0.01"
+      /></label>
+      <button type="submit" disabled>Add Ticket</button>
+    </form>
+
+    <hr />
+
+    <!-- Tickets Table -->
+    <table>
+      <thead>
+        <tr>
+          <th>Ticket Number</th>
+          <th>Ticket Price</th>
+          <th>Is Winner</th>
+          <th>Prize Amount</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tickets-table"></tbody>
+    </table>
+
+    <script>
+      async function loadTickets() {
+        const response = await fetch('/api/tickets');
+        const tickets = await response.json();
+
+        const table = document.getElementById('tickets-table');
+        table.innerHTML = '';
+        tickets.forEach((ticket) => {
+          const row = document.createElement('tr');
+          row.dataset.id = ticket.ticket_id;
+          row.innerHTML = `
+                    <td><input class="ticket-number" value="${
+                      ticket.ticket_number
+                    }"></td>
+                    <td><input class="ticket-price" type="number" step="0.01" value="${
+                      ticket.ticket_price
+                    }"></td>
+                    <td><input class="ticket-is-winner" type="checkbox" ${
+                      ticket.is_winner ? 'checked' : ''
+                    }></td>
+                    <td><input class="ticket-prize-amount" type="number" step="0.01" value="${
+                      ticket.prize_amount
+                    }"></td>
+                    <td>
+                        <button onclick="updateTicket('${
+                          ticket.ticket_id
+                        }')" disabled>Update</button>
+                        <button onclick="deleteTicket('${
+                          ticket.ticket_id
+                        }')" disabled>Delete</button>
+                    </td>
+                `;
+          table.appendChild(row);
+        });
+      }
+
+      async function loadStatistics() {
+        const response = await fetch('/api/tickets/statistics');
+        const stats = await response.json();
+
+        document.getElementById('average-price').innerText =
+          stats.average_ticket_price.toFixed(2);
+        document.getElementById('total-winners').innerText =
+          stats.total_winners;
+        document.getElementById('total-prize').innerText =
+          stats.total_prize_amount.toFixed(2);
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        loadTickets();
+        loadStatistics();
+      });
+    </script>
+  </body>
+</html>
