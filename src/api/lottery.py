@@ -76,8 +76,6 @@ def get_tickets(sort_by: Optional[str] = None, order: Optional[str] = "asc"):
     if order is None:
         order = "asc"  # Default value
 
-    print(LotteryTicket.__annotations__)
-    print(sort_by, sort_by in LotteryTicket.__annotations__)
     # Check if model has passed field
     if sort_by and field_in_model(sort_by, LotteryTicket):
         # Defining the sorting order
