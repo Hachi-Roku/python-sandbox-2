@@ -9,5 +9,4 @@ from fastapi.testclient import TestClient
 client = TestClient(app)
 
 def test_read_root():
-    # response = client.get("/upload-image")
     assert 2 == 2
