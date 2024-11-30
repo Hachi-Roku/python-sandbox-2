@@ -36,12 +36,63 @@
 
       function disableButtons() {
         document.querySelectorAll('button').forEach((button) => {
-          button.disabled = true;
+          button.setAttribute('disabled');
         });
       }
 
+      async function updateTicket(ticketId) {
+        const row = document.querySelector(`[data-id="${ticketId}"]`);
+        const ticket = {
+          ticket_number: row.querySelector('.ticket-number').value,
+          ticket_price: parseFloat(row.querySelector('.ticket-price').value),
+          is_winner: row.querySelector('.ticket-is-winner').checked,
+          prize_amount: parseFloat(
+            row.querySelector('.ticket-prize-amount').value || 0
+          ),
+        };
+
+        const response = await fetch(`/api/tickets/${ticketId}`, {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(ticket),
+        });
+
+        if (response.ok) {
+          alert('Ticket updated successfully!');
+          window.location.reload();
+        } else {
+          alert('Failed to update ticket.');
+        }
+      }
+
+      async function addTicket() {
+        const ticket = {
+          ticket_number: document.getElementById('ticket_number').value,
+          ticket_price: parseFloat(
+            document.getElementById('ticket_price').value
+          ),
+          is_winner: document.getElementById('is_winner').checked,
+          prize_amount: parseFloat(
+            document.getElementById('prize_amount').value || 0
+          ),
+        };
+
+        const response = await fetch('/api/tickets/', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(ticket),
+        });
+
+        if (response.ok) {
+          alert('Ticket added successfully!');
+          window.location.reload();
+        } else {
+          alert('Failed to add ticket.');
+        }
+      }
+
       window.onload = function () {
-        disableButtons();
+        // disableButtons();
       };
     </script>
   </head>
@@ -80,7 +131,7 @@
       <label
         >Prize Amount: <input id="prize_amount" type="number" step="0.01"
       /></label>
-      <button type="submit" disabled>Add Ticket</button>
+      <button type="submit">Add Ticket</button>
     </form>
 
     <hr />
@@ -125,10 +176,10 @@
                     <td>
                         <button onclick="updateTicket('${
                           ticket.ticket_id
-                        }')" disabled>Update</button>
+                        }')">Update</button>
                         <button onclick="deleteTicket('${
                           ticket.ticket_id
-                        }')" disabled>Delete</button>
+                        }')">Delete</button>
                     </td>
                 `;
           table.appendChild(row);
