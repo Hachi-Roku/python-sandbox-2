@@ -49,6 +49,7 @@
           prize_amount: parseFloat(
             row.querySelector('.ticket-prize-amount').value || 0
           ),
+          purchase_date: row.querySelector('.purchase-date').value,
         };
 
         const response = await fetch(`/api/tickets/${ticketId}`, {
@@ -118,6 +119,9 @@
             }></td>
             <td><input class="ticket-prize-amount" type="number" step="0.01" value="${
               ticket.prize_amount
+            }"></td>
+            <td><input class="purchase-date" type="date" value="${
+              ticket.purchase_date
             }"></td>
             <td>
                 <button onclick="updateTicket('${
@@ -268,6 +272,7 @@
           <th data-sort="ticket_price">Ticket Price</th>
           <th data-sort="is_winner">Is Winner</th>
           <th data-sort="prize_amount">Prize Amount</th>
+          <th data-sort="purchase_date">Purchase Date</th>
           <th>Actions</th>
         </tr>
       </thead>
