@@ -7,10 +7,8 @@
     <link rel="stylesheet" href="/static/styles.css" />
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script>
-      let captchaVerified = false;
-
       async function verifyCaptcha(token) {
-        const response = await fetch('/verify-captcha', {
+        const response = await fetch('/api/verify-captcha', {
           method: 'POST',
           body: new URLSearchParams({captcha_response: token}),
         });
@@ -32,19 +30,7 @@
 
       function enableButtons() {
         document.querySelectorAll('button').forEach((button) => {
-          button.disabled = false;
-        });
-      }
-
-      function disableButtons() {
-        document.querySelectorAll('button').forEach((button) => {
-          button.disabled = true;
-        });
-      }
-
-      function enableButtons() {
-        document.querySelectorAll('button').forEach((button) => {
-          button.disabled = false;
+          button.removeAttribute('disabled');
         });
       }
 
@@ -63,6 +49,8 @@
     <h1>Lottery Tickets</h1>
 
     <div>I'm a human</div>
+
+    <div id="status-message" style="margin-top: 10px; font-weight: bold"></div>
 
     <!-- Google reCAPTCHA -->
     <div

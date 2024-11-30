@@ -3,6 +3,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from src.api.lottery import lottery_router
+from src.api.verify import verify_router
 
 from src.routes.table import table_router
 
@@ -23,3 +24,4 @@ app.include_router(table_router, prefix="")
 
 # Including api
 app.include_router(lottery_router, prefix="/api", tags=["Lottery"])
+app.include_router(verify_router, prefix="/api", tags=["Verify"])
