@@ -97,27 +97,35 @@ def get_statistics():
     """
     Retrieve statistics:
     - Average ticket price
+    - Total, min, max, avg for all numeric fields
     - Number of winning tickets
     - Total prize amount
     """
     if not tickets_db:
         raise HTTPException(status_code=404, detail="No tickets available for analysis.")
 
-    # Calculate total ticket price
-    total_price = sum(ticket.ticket_price for ticket in tickets_db)
+    # Helper function to calculate statistics for a numeric field
+    def calculate_stats(values):
+        return {
+            "total": sum(values),
+            "min": min(values),
+            "max": max(values),
+            "avg": sum(values) / len(values) if values else 0,
+        }
 
-    # Filter winners and count
-    winners = [ticket for ticket in tickets_db if ticket.is_winner]
+    # Extract numeric field values
+    ticket_prices = [ticket.ticket_price for ticket in tickets_db]
+    prize_amounts = [ticket.prize_amount or 0 for ticket in tickets_db]
+    total_winners = [1 if ticket.is_winner else 0 for ticket in tickets_db]  # Boolean to numeric
 
-    # Sum prize amounts, ignoring None values
-    total_prize = sum(ticket.prize_amount or 0 for ticket in winners)
-
-    return {
-        "average_ticket_price": total_price / len(tickets_db),
-        "total_winners": len(winners),
-        "total_prize_amount": total_prize
+    # Calculate statistics for each field
+    stats = {
+        "ticket_price": calculate_stats(ticket_prices),
+        "prize_amount": calculate_stats(prize_amounts),
+        "winners_count": calculate_stats(total_winners),
     }
 
+    return stats
 @lottery_router.post("/tickets", response_model=LotteryTicket)
 def add_ticket(ticket: LotteryTicketCreate):
     """

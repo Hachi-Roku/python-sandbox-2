@@ -94,7 +94,6 @@
       async function loadTickets(sortBy = null, order = 'asc') {
         let url = '/api/tickets';
 
-        // Добавляем параметры сортировки
         if (sortBy) {
           url += `?sort_by=${sortBy}&order=${order}`;
         }
@@ -137,12 +136,22 @@
         const response = await fetch('/api/tickets/statistics');
         const stats = await response.json();
 
-        document.getElementById('average-price').innerText =
-          stats.average_ticket_price.toFixed(2);
-        document.getElementById('total-winners').innerText =
-          stats.total_winners;
-        document.getElementById('total-prize').innerText =
-          stats.total_prize_amount.toFixed(2);
+        const statsTable = document.getElementById('statistics-table');
+        statsTable.innerHTML = '';
+
+        for (const field in stats) {
+          if (stats.hasOwnProperty(field)) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${field}</td>
+                <td>${stats[field].total.toFixed(2)}</td>
+                <td>${stats[field].min.toFixed(2)}</td>
+                <td>${stats[field].max.toFixed(2)}</td>
+                <td>${stats[field].avg.toFixed(2)}</td>
+            `;
+            statsTable.appendChild(row);
+          }
+        }
       }
 
       document.addEventListener('DOMContentLoaded', () => {
@@ -203,9 +212,18 @@
     <!-- Dashboard -->
     <div class="dashboard">
       <h2>Dashboard</h2>
-      <p>Average Ticket Price: $<span id="average-price">0.00</span></p>
-      <p>Total Winners: <span id="total-winners">0</span></p>
-      <p>Total Prize Amount: $<span id="total-prize">0.00</span></p>
+      <table>
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Total</th>
+            <th>Min</th>
+            <th>Max</th>
+            <th>Average</th>
+          </tr>
+        </thead>
+        <tbody id="statistics-table"></tbody>
+      </table>
     </div>
 
     <!-- Add Ticket Form -->

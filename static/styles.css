@@ -143,3 +143,23 @@ th.sort-asc::after {
 th.sort-desc::after {
   border-top-color: black;
 }
+
+.dashboard {
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    width: 80%;
+  }
+
+  table th, table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+
+  table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+}
