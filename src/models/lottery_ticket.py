@@ -1,6 +1,4 @@
-from pydantic import BaseModel
 from datetime import date
-from typing import Optional
 from .lottery_ticket_create import LotteryTicketCreate
 
 class LotteryTicket(LotteryTicketCreate):
