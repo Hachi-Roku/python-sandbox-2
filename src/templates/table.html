@@ -141,7 +141,38 @@
       document.addEventListener('DOMContentLoaded', () => {
         loadTickets();
         loadStatistics();
+        document.querySelectorAll('th[data-sort]').forEach((th) => {
+          th.addEventListener('click', handleSort);
+        });
       });
+
+      let currentSortBy = null;
+      let currentOrder = 'asc';
+
+      function handleSort(event) {
+        const sortBy = event.target.dataset.sort;
+        if (!sortBy) return;
+
+        if (currentSortBy === sortBy) {
+          currentOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+        } else {
+          currentSortBy = sortBy;
+          currentOrder = 'asc';
+        }
+
+        loadTickets(sortBy, currentOrder);
+
+        updateHeaderStyles(sortBy, currentOrder);
+      }
+
+      function updateHeaderStyles(sortBy, order) {
+        document.querySelectorAll('th[data-sort]').forEach((th) => {
+          th.classList.remove('sort-asc', 'sort-desc');
+          if (th.dataset.sort === sortBy) {
+            th.classList.add(order === 'asc' ? 'sort-asc' : 'sort-desc');
+          }
+        });
+      }
 
       window.onload = function () {
         // disableButtons();
@@ -192,10 +223,10 @@
     <table>
       <thead>
         <tr>
-          <th>Ticket Number</th>
-          <th>Ticket Price</th>
-          <th>Is Winner</th>
-          <th>Prize Amount</th>
+          <th data-sort="ticket_number">Ticket Number</th>
+          <th data-sort="ticket_price">Ticket Price</th>
+          <th data-sort="is_winner">Is Winner</th>
+          <th data-sort="prize_amount">Prize Amount</th>
           <th>Actions</th>
         </tr>
       </thead>

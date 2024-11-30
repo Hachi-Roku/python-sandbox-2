@@ -124,7 +124,6 @@ button:disabled {
 th {
   cursor: pointer;
   position: relative;
-  padding-right: 20px;
 }
 
 th.sort-asc::after,
